@@ -132,7 +132,7 @@ func Sort(inputPath string, outputPath string) error {
 
 	// buffers files tmp folder
 	if err = os.Mkdir(tmpFolderPath, 0777); err != nil {
-		return err
+		return fmt.Errorf("cannot create tmp dir: %w", err)
 	}
 	defer func() { _ = os.RemoveAll(tmpFolderPath) }()
 
@@ -155,7 +155,7 @@ func Sort(inputPath string, outputPath string) error {
 	inputMirrorWriter := bufio.NewWriter(inputMirrorFile)
 	for inputScanner.Scan() {
 		if _, err = fmt.Fprintln(inputMirrorWriter, inputScanner.Text()); err != nil {
-			return err
+			return fmt.Errorf("cannot copy input file to mirror: %w", err)
 		}
 		linesCount++
 	}
@@ -163,14 +163,14 @@ func Sort(inputPath string, outputPath string) error {
 		return fmt.Errorf("cannot copy input file to input mirror: %w", inputScanner.Err())
 	}
 	if err = inputMirrorWriter.Flush(); err != nil {
-		return err
+		return fmt.Errorf("cannot flush mirror: %w", err)
 	}
 
 	for batchSize := 1; batchSize < linesCount; batchSize *= 2 {
 
 		// truncate used output mirror
 		if err = truncateFile(outputMirrorFile); err != nil {
-			return err
+			return fmt.Errorf("cannot truncate mirror: %w", err)
 		}
 
 		// input mirror was updated before
@@ -184,7 +184,7 @@ func Sort(inputPath string, outputPath string) error {
 		for line := 0; line < linesCount; line += batchSize {
 			// truncate used batches buffers
 			if err = truncateFiles(lBatchFile, rBatchFile); err != nil {
-				return err
+				return fmt.Errorf("cannot truncate batches: %w", err)
 			}
 
 			// copy left batch from input mirror
@@ -193,7 +193,7 @@ func Sort(inputPath string, outputPath string) error {
 				return fmt.Errorf("cannot copy left batch: %w", err)
 			}
 			if err = lBatchW.Flush(); err != nil {
-				return err
+				return fmt.Errorf("cannot flush left batch: %w", err)
 			}
 
 			// copy right batch from input mirror
@@ -201,7 +201,7 @@ func Sort(inputPath string, outputPath string) error {
 				return fmt.Errorf("cannot copy right batch: %w", err)
 			}
 			if err = rBatchW.Flush(); err != nil {
-				return err
+				return fmt.Errorf("cannot flush right batch: %w", err)
 			}
 
 			// we need read from batches later
@@ -228,7 +228,7 @@ func Sort(inputPath string, outputPath string) error {
 
 	// input mirror was updated before
 	if _, err = inputMirrorFile.Seek(0, 0); err != nil {
-		return err
+		return fmt.Errorf("cannot seek mirror: %w", err)
 	}
 
 	// if output path is input path => we just open this file
