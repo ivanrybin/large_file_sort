@@ -53,4 +53,4 @@ $ ./file_sort -i input.txt -o output.txt
 
 Merge sort with 4 file buffers and maximum 2 strings in RAM in one moment. 
 
-![](https://github.com/ivanrybin/large_file_sort/tree/algo_pic.png)
+![](https://github.com/ivanrybin/large_file_sort/blob/master/algo_pic.png)
