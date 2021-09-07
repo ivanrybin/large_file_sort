@@ -118,7 +118,7 @@ func mergeBatches(lBatch, rBatch *bufio.Scanner, out io.Writer) (err error) {
 		return fmt.Errorf("cannot merge: left batch: %w", lBatch.Err())
 	}
 	if rBatch.Err() != nil {
-		return fmt.Errorf("cannot merge: right batch: %w", lBatch.Err())
+		return fmt.Errorf("cannot merge: right batch: %w", rBatch.Err())
 	}
 	return
 }
