@@ -126,7 +126,7 @@ func mergeBatches(lBatch, rBatch *bufio.Scanner, out io.Writer) (err error) {
 func Sort(inputPath string, outputPath string) error {
 	inputFile, err := os.Open(inputPath)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("cannot open input file: %w", err)
 	}
 	defer func() { _ = inputFile.Close() }()
 
@@ -234,7 +234,7 @@ func Sort(inputPath string, outputPath string) error {
 	// if output path is input path => we just open this file
 	outputFile, err := os.Create(outputPath)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("cannot open output file: %w", err)
 	}
 	defer func() { _ = outputFile.Close() }()
 
